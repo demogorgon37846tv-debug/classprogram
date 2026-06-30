@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Lesson Checklist – Grade V LUGATIMAN</title>
+    <style>
+        /* ─── RESET & BASE ─── */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f4f7fb;
+            padding: 24px;
+            color: #1e2b3c;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            padding: 30px 28px 40px;
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 18px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #0b1a2a;
+        }
+        .header h1 small {
+            font-weight: 400;
+            font-size: 18px;
+            color: #3a5a7a;
+            margin-left: 12px;
+        }
+        .header .teacher {
+            font-size: 17px;
+            background: #e9edf4;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1f3a57;
+        }
+
+        /* ─── TABS ─── */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #dde3ec;
+            padding-bottom: 4px;
+        }
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 30px 30px 0 0;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            background: #eef2f7;
+            color: #2f4058;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .tab-btn:hover {
+            background: #d7e0eb;
+        }
+        .tab-btn.active {
+            background: #1f2e44;
+            color: #fff;
+        }
+        .tab-btn.monday.active {
+            background: #1a3a6b;
+        }
+        .tab-btn.tuesday.active {
+            background: #a1313a;
+        }
+        .tab-btn.wednesday.active {
+            background: #2a6b47;
+        }
+        .tab-btn.thursday.active {
+            background: #b17d2b;
+        }
+        .tab-btn.friday.active {
+            background: #6d3b7a;
+        }
+
+        /* ─── DAY PANELS ─── */
+        .day-panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .day-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0.5;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-panel h2 {
+            font-size: 22px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .day-panel h2 .badge {
+            font-size: 14px;
+            font-weight: 400;
+            background: #e2e8f0;
+            padding: 2px 16px;
+            border-radius: 30px;
+            color: #1f3a57;
+        }
+
+        /* ─── TABLE ─── */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+        .schedule-table th {
+            text-align: left;
+            padding: 10px 8px 6px 8px;
+            font-weight: 600;
+            color: #1f3a57;
+            border-bottom: 2px solid #cfdae8;
+            background: #f8faff;
+        }
+        .schedule-table td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #e4eaf2;
+            vertical-align: middle;
+        }
+        .schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+        .schedule-table .subject-cell {
+            font-weight: 500;
+            color: #0b1f33;
+            white-space: nowrap;
+            min-width: 130px;
+        }
+        .schedule-table .subject-cell.break {
+            color: #6a7d94;
+            font-weight: 400;
+            font-style: italic;
+        }
+        .schedule-table .input-cell {
+            width: 100%;
+        }
+        .schedule-table input[type="text"] {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ccd7e6;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fbfdff;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+        .schedule-table input[type="text"]:focus {
+            border-color: #2d5f8b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 95, 139, 0.15);
+            background: #fff;
+        }
+        .schedule-table input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #1f3a57;
+            cursor: pointer;
+            transform: scale(1.05);
+        }
+        .schedule-table .check-cell {
+            text-align: center;
+            width: 50px;
+        }
+
+        /* notes */
+        .notes-area {
+            margin-top: 22px;
+            padding-top: 16px;
+            border-top: 2px dashed #d0dcec;
+        }
+        .notes-area label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1f3a57;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .notes-area textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccd7e6;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 52px;
+            font-family: inherit;
+            background: #fafcff;
+        }
+        .notes-area textarea:focus {
+            border-color: #2d5f8b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 95, 139, 0.12);
+        }
+
+        /* ─── WEEKLY SUMMARY ─── */
+        .summary-section {
+            margin-top: 48px;
+            padding-top: 28px;
+            border-top: 3px solid #dde3ec;
+        }
+        .summary-section h3 {
+            font-size: 20px;
+            margin-bottom: 14px;
+            color: #0b1a2a;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px 12px;
+            background: #f8faff;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid #e2eaf5;
+        }
+        .summary-grid .subject-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 3px 0;
+            border-bottom: 1px solid #edf2f9;
+        }
+        .summary-grid .subject-row .subj {
+            font-weight: 500;
+        }
+        .summary-grid .subject-row .days {
+            color: #1f3a57;
+            font-weight: 600;
+        }
+        .summary-grid .subject-row .days span {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+        .summary-grid .subject-row .days .check-mark {
+            color: #1d7a3e;
+        }
+        .summary-grid .subject-row .days .scheduled {
+            color: #5a7eb0;
+        }
+        .summary-grid .subject-row .days .dash {
+            color: #a0b4cc;
+        }
+        .summary-overview {
+            display: grid;
+            gap: 14px;
+        }
+        .summary-day-card {
+            background: #f8faff;
+            border: 1px solid #e2eaf5;
+            border-radius: 16px;
+            padding: 16px 18px;
+        }
+        .summary-day-card h4 {
+            font-size: 16px;
+            color: #0b1a2a;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-day-card h4 span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #51708f;
+            background: #edf4fb;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+        .summary-list {
+            display: grid;
+            gap: 6px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #edf2f9;
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .status-badge.done {
+            background: #e7f7ed;
+            color: #1d7a3e;
+        }
+        .status-badge.pending {
+            background: #eef3f8;
+            color: #5f7692;
+        }
+        .summary-subject {
+            font-weight: 600;
+            color: #1f3a57;
+        }
+        .summary-detail {
+            font-size: 13px;
+            color: #5f7692;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+        .summary-notes {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #d8e2ee;
+            font-size: 13px;
+            color: #5f7692;
+            white-space: pre-wrap;
+        }
+
+        /* ─── TOOLBAR ─── */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .toolbar button {
+            padding: 8px 22px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            background: #e9edf4;
+            color: #1f3a57;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .toolbar button:hover {
+            background: #d3deec;
+        }
+        .toolbar button.print-btn {
+            background: #1f3a57;
+            color: #fff;
+        }
+        .toolbar button.print-btn:hover {
+            background: #112b42;
+        }
+        .toolbar button.clear-btn {
+            background: #f0e6e6;
+            color: #7a3a3a;
+        }
+        .toolbar button.clear-btn:hover {
+            background: #e6d4d4;
+        }
+        .save-status {
+            font-size: 13px;
+            color: #3f6482;
+            background: #f1f6fb;
+            border: 1px solid #d8e4ef;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ─── PRINT STYLES ─── */
+        @media print {
+            body {
+                background: #fff;
+                padding: 0.3in;
+            }
+            .container {
+                box-shadow: none;
+                padding: 10px 0;
+                border-radius: 0;
+            }
+            .tab-btn {
+                display: none;
+            }
+            .day-panel {
+                display: block !important;
+                page-break-inside: avoid;
+                margin-bottom: 32px;
+            }
+            .day-panel:not(:last-child) {
+                border-bottom: 2px dashed #ccc;
+                padding-bottom: 28px;
+            }
+            .schedule-table input[type="text"] {
+                border: 1px solid #aaa;
+                background: #fff !important;
+            }
+            .schedule-table input[type="checkbox"] {
+                accent-color: #000;
+            }
+            .toolbar {
+                display: none;
+            }
+            .header .teacher {
+                background: #eee;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .summary-grid {
+                border: 1px solid #aaa;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .tabs {
+                display: none;
+            }
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 700px) {
+            .container {
+                padding: 16px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .header h1 {
+                font-size: 21px;
+            }
+            .header h1 small {
+                display: block;
+                margin-left: 0;
+                font-size: 16px;
+            }
+            .schedule-table .subject-cell {
+                min-width: 90px;
+                font-size: 13px;
+            }
+            .schedule-table td {
+                padding: 5px 4px;
+            }
+            .schedule-table input[type="text"] {
+                font-size: 13px;
+                padding: 4px 8px;
+            }
+            .tab-btn {
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <h1>
+                    📋 Daily Lesson Checklist
+                    <small>Grade V – LUGATIMAN</small>
+                </h1>
+            </div>
+            <div class="teacher">👨‍🏫 BONN ERVIN F. LUGATIMAN</div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs" id="tabContainer">
+            <button class="tab-btn monday active" data-day="monday">🔵 Monday</button>
+            <button class="tab-btn tuesday" data-day="tuesday">🔴 Tuesday</button>
+            <button class="tab-btn wednesday" data-day="wednesday">🟢 Wednesday</button>
+            <button class="tab-btn thursday" data-day="thursday">🟡 Thursday</button>
+            <button class="tab-btn friday" data-day="friday">🟣 Friday</button>
+            <button class="tab-btn summary" data-day="summary">📊 Weekly Overview</button>
+        </div>
+
+        <!-- ========== WEEKLY OVERVIEW ========== -->
+        <div class="day-panel" id="panel-summary">
+            <h2>📊 Weekly Overview <span class="badge">Monday → Friday</span></h2>
+            <div class="summary-overview" id="summaryOverview"></div>
+        </div>
+
+        <!-- ========== MONDAY ========== -->
+        <div class="day-panel active" id="panel-monday">
+            <h2>🔵 Monday <span class="badge">Flag Raising · Collaborative Session</span></h2>
+            <table class="schedule-table">
+                <thead><tr><th>✔</th><th>Subject / Period</th><th>Lesson / Activity (write manually)</th></tr></thead>
+                <tbody>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Flag Raising</td><td class="input-cell"><input type="text" placeholder="e.g. National anthem / school ceremony" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Daily Routine</td><td class="input-cell"><input type="text" placeholder="e.g. Prayer, attendance, classroom rules" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>HGP</strong> (Homeroom Guidance)</td><td class="input-cell"><input type="text" placeholder="Write your HGP lesson / topic" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ENGLISH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for English" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">HEALTH BREAK</td><td class="input-cell"><input type="text" placeholder="— break —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MATHEMATICS</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Math" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>SCIENCE</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Science" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">LUNCH BREAK</td><td class="input-cell"><input type="text" placeholder="— lunch —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>FILIPINO</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Filipino" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARALING PANLIPUNAN</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for AP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MAPEH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for MAPEH" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><em>Collaborative Expertise Session</em></td><td class="input-cell"><input type="text" placeholder="Teacher collaboration / assignment" /></td></tr>
+                </tbody>
+            </table>
+            <div class="notes-area">
+                <label>📝 Monday Notes</label>
+                <textarea placeholder="Add any reminders, materials needed, or observations..."></textarea>
+            </div>
+        </div>
+
+        <!-- ========== TUESDAY ========== -->
+        <div class="day-panel" id="panel-tuesday">
+            <h2>🔴 Tuesday <span class="badge">ARAL Math</span></h2>
+            <table class="schedule-table">
+                <thead><tr><th>✔</th><th>Subject / Period</th><th>Lesson / Activity (write manually)</th></tr></thead>
+                <tbody>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Daily Routine</td><td class="input-cell"><input type="text" placeholder="e.g. Prayer, attendance" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>GMRC</strong> (Good Manners)</td><td class="input-cell"><input type="text" placeholder="GMRC lesson / topic" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ENGLISH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for English" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">HEALTH BREAK</td><td class="input-cell"><input type="text" placeholder="— break —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MATHEMATICS</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Math" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>SCIENCE</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Science" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">LUNCH BREAK</td><td class="input-cell"><input type="text" placeholder="— lunch —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>FILIPINO</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Filipino" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>EPP</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for EPP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MAPEH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for MAPEH" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARAL PROGRAM (ARAL Math)</strong></td><td class="input-cell"><input type="text" placeholder="ARAL Math lesson / activity" /></td></tr>
+                </tbody>
+            </table>
+            <div class="notes-area">
+                <label>📝 Tuesday Notes</label>
+                <textarea placeholder="Add any reminders, materials needed, or observations..."></textarea>
+            </div>
+        </div>
+
+        <!-- ========== WEDNESDAY ========== -->
+        <div class="day-panel" id="panel-wednesday">
+            <h2>🟢 Wednesday <span class="badge">ARAL Math</span></h2>
+            <table class="schedule-table">
+                <thead><tr><th>✔</th><th>Subject / Period</th><th>Lesson / Activity (write manually)</th></tr></thead>
+                <tbody>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Daily Routine</td><td class="input-cell"><input type="text" placeholder="e.g. Prayer, attendance" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>GMRC</strong></td><td class="input-cell"><input type="text" placeholder="GMRC lesson / topic" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ENGLISH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for English" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">HEALTH BREAK</td><td class="input-cell"><input type="text" placeholder="— break —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MATHEMATICS</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Math" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>SCIENCE</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Science" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">LUNCH BREAK</td><td class="input-cell"><input type="text" placeholder="— lunch —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARALING PANLIPUNAN</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for AP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>EPP</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for EPP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MAPEH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for MAPEH" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARAL PROGRAM (ARAL Math)</strong></td><td class="input-cell"><input type="text" placeholder="ARAL Math lesson / activity" /></td></tr>
+                </tbody>
+            </table>
+            <div class="notes-area">
+                <label>📝 Wednesday Notes</label>
+                <textarea placeholder="Add any reminders, materials needed, or observations..."></textarea>
+            </div>
+        </div>
+
+        <!-- ========== THURSDAY ========== -->
+        <div class="day-panel" id="panel-thursday">
+            <h2>🟡 Thursday <span class="badge">ARAL Reading · Collaborative Session</span></h2>
+            <table class="schedule-table">
+                <thead><tr><th>✔</th><th>Subject / Period</th><th>Lesson / Activity (write manually)</th></tr></thead>
+                <tbody>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Daily Routine</td><td class="input-cell"><input type="text" placeholder="e.g. Prayer, attendance" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>GMRC</strong></td><td class="input-cell"><input type="text" placeholder="GMRC lesson / topic" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ENGLISH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for English" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">HEALTH BREAK</td><td class="input-cell"><input type="text" placeholder="— break —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>FILIPINO</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Filipino" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>SCIENCE</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Science" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">LUNCH BREAK</td><td class="input-cell"><input type="text" placeholder="— lunch —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARALING PANLIPUNAN</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for AP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>EPP</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for EPP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARAL PROGRAM (ARAL Reading)</strong></td><td class="input-cell"><input type="text" placeholder="ARAL Reading lesson / activity" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><em>Collaborative Expertise Session</em></td><td class="input-cell"><input type="text" placeholder="Teacher collaboration / assignment" /></td></tr>
+                </tbody>
+            </table>
+            <div class="notes-area">
+                <label>📝 Thursday Notes</label>
+                <textarea placeholder="Add any reminders, materials needed, or observations..."></textarea>
+            </div>
+        </div>
+
+        <!-- ========== FRIDAY ========== -->
+        <div class="day-panel" id="panel-friday">
+            <h2>🟣 Friday <span class="badge">ARAL Reading · SLAC / Flag Lowering</span></h2>
+            <table class="schedule-table">
+                <thead><tr><th>✔</th><th>Subject / Period</th><th>Lesson / Activity (write manually)</th></tr></thead>
+                <tbody>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell">Daily Routine</td><td class="input-cell"><input type="text" placeholder="e.g. Prayer, attendance" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>GMRC</strong></td><td class="input-cell"><input type="text" placeholder="GMRC lesson / topic" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MATHEMATICS</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Math" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">HEALTH BREAK</td><td class="input-cell"><input type="text" placeholder="— break —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>FILIPINO</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for Filipino" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>EPP</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for EPP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell break">LUNCH BREAK</td><td class="input-cell"><input type="text" placeholder="— lunch —" style="background:#f5f7fa;color:#6a7d94;" disabled /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARALING PANLIPUNAN</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for AP" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>MAPEH</strong></td><td class="input-cell"><input type="text" placeholder="Lesson / activity for MAPEH" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>ARAL PROGRAM (ARAL Reading)</strong></td><td class="input-cell"><input type="text" placeholder="ARAL Reading lesson / activity" /></td></tr>
+                    <tr><td class="check-cell"><input type="checkbox" /></td><td class="subject-cell"><strong>SLAC Session / Flag Lowering</strong></td><td class="input-cell"><input type="text" placeholder="SLAC topic or flag ceremony notes" /></td></tr>
+                </tbody>
+            </table>
+            <div class="notes-area">
+                <label>📝 Friday Notes</label>
+                <textarea placeholder="Add any reminders, materials needed, or observations..."></textarea>
+            </div>
+        </div>
+
+        <!-- ========== WEEKLY SUMMARY ========== -->
+        <div class="summary-section">
+            <h3>📊 Weekly Subject Tracker (at-a-glance)</h3>
+            <div class="summary-grid" id="summaryGrid">
+                <!-- populated by JS -->
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="save-status" id="saveStatus">💾 Progress saved automatically</div>
+            <button class="clear-btn" onclick="clearAllInputs()">🧹 Clear all inputs</button>
+            <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        </div>
+
+    </div>
+
+    <script>
+        // ─── TAB SWITCHING ───
+        const tabs = document.querySelectorAll('.tab-btn');
+        const panels = {
+            monday: document.getElementById('panel-monday'),
+            tuesday: document.getElementById('panel-tuesday'),
+            wednesday: document.getElementById('panel-wednesday'),
+            thursday: document.getElementById('panel-thursday'),
+            friday: document.getElementById('panel-friday'),
+            summary: document.getElementById('panel-summary')
+        };
+        const STORAGE_KEY = 'grade5-daily-lesson-checklist';
+        const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const dayNames = {
+            monday: 'Monday',
+            tuesday: 'Tuesday',
+            wednesday: 'Wednesday',
+            thursday: 'Thursday',
+            friday: 'Friday'
+        };
+
+        function showDay(day) {
+            tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.day === day));
+            Object.entries(panels).forEach(([key, panel]) => panel.classList.toggle('active', key === day));
+            document.querySelectorAll('.notes-area textarea').forEach(ta => {
+                ta.style.height = 'auto';
+                ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+            });
+        }
+
+        tabs.forEach(btn => {
+            btn.addEventListener('click', function() {
+                showDay(this.dataset.day);
+                saveProgress();
+            });
+        });
+
+        // ─── BUILD WEEKLY SUMMARY ───
+        function getVisibleRows(panel) {
+            return Array.from(panel.querySelectorAll('tbody tr')).map(row => {
+                const checkbox = row.querySelector('input[type="checkbox"]');
+                const input = row.querySelector('input[type="text"]');
+                const subjectCell = row.querySelector('.subject-cell');
+                return {
+                    subject: subjectCell ? subjectCell.textContent.replace(/\s+/g, ' ').trim() : '',
+                    checked: checkbox ? checkbox.checked : false,
+                    value: input && !input.disabled ? input.value.trim() : ''
+                };
+            }).filter(item => item.subject);
+        }
+
+        function renderSummary() {
+            const grid = document.getElementById('summaryGrid');
+            if (!grid) return;
+
+            const tracker = new Map();
+            dayOrder.forEach((day, index) => {
+                const panel = panels[day];
+                if (!panel) return;
+                getVisibleRows(panel).forEach(item => {
+                    if (!tracker.has(item.subject)) {
+                        tracker.set(item.subject, Array(5).fill('')); 
+                    }
+                    const values = tracker.get(item.subject);
+                    values[index] = item.checked ? 'checked' : 'scheduled';
+                    tracker.set(item.subject, values);
+                });
+            });
+
+            grid.innerHTML = '';
+            Array.from(tracker.entries())
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .forEach(([subject, days]) => {
+                    const row = document.createElement('div');
+                    row.className = 'subject-row';
+
+                    const subjSpan = document.createElement('span');
+                    subjSpan.className = 'subj';
+                    subjSpan.textContent = subject;
+
+                    const daysSpan = document.createElement('span');
+                    daysSpan.className = 'days';
+                    daysSpan.innerHTML = days.map((status) => {
+                        if (status === 'checked') return '<span class="check-mark">✓</span>';
+                        if (status === 'scheduled') return '<span class="scheduled">•</span>';
+                        return '<span class="dash">–</span>';
+                    }).join('');
+
+                    row.appendChild(subjSpan);
+                    row.appendChild(daysSpan);
+                    grid.appendChild(row);
+                });
+        }
+
+        function renderSummaryPanel() {
+            const container = document.getElementById('summaryOverview');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const cards = dayOrder.map(day => {
+                const panel = panels[day];
+                if (!panel) return null;
+
+                const heading = dayNames[day];
+                const rows = getVisibleRows(panel);
+                const notes = panel.querySelector('.notes-area textarea')?.value.trim() || '';
+                const completed = rows.filter(row => row.checked).length;
+
+                const card = document.createElement('div');
+                card.className = 'summary-day-card';
+
+                const title = document.createElement('h4');
+                title.innerHTML = `${heading} <span>${completed} completed</span>`;
+                card.appendChild(title);
+
+                const list = document.createElement('div');
+                list.className = 'summary-list';
+                rows.forEach(row => {
+                    const item = document.createElement('div');
+                    item.className = 'summary-row';
+
+                    const left = document.createElement('div');
+                    left.className = 'summary-left';
+                    const badge = document.createElement('span');
+                    badge.className = `status-badge ${row.checked ? 'done' : 'pending'}`;
+                    badge.textContent = row.checked ? '✓' : '○';
+                    left.appendChild(badge);
+
+                    const content = document.createElement('div');
+                    const subject = document.createElement('div');
+                    subject.className = 'summary-subject';
+                    subject.textContent = row.subject;
+                    content.appendChild(subject);
+                    if (row.value) {
+                        const detail = document.createElement('div');
+                        detail.className = 'summary-detail';
+                        detail.textContent = row.value;
+                        content.appendChild(detail);
+                    }
+                    left.appendChild(content);
+
+                    item.appendChild(left);
+                    list.appendChild(item);
+                });
+                card.appendChild(list);
+
+                if (notes) {
+                    const noteBox = document.createElement('div');
+                    noteBox.className = 'summary-notes';
+                    noteBox.textContent = `Notes: ${notes}`;
+                    card.appendChild(noteBox);
+                }
+
+                return card;
+            }).filter(Boolean);
+
+            cards.forEach(card => container.appendChild(card));
+        }
+        renderSummary();
+        renderSummaryPanel();
+
+        // ─── PERSIST PROGRESS TO LOCAL STORAGE ───
+        function collectProgressState() {
+            const state = {};
+            document.querySelectorAll('.day-panel').forEach(panel => {
+                const day = panel.id.replace('panel-', '');
+                const entries = Array.from(panel.querySelectorAll('tbody tr')).map(row => {
+                    const checkbox = row.querySelector('input[type="checkbox"]');
+                    const input = row.querySelector('input[type="text"]');
+                    return {
+                        checked: checkbox ? checkbox.checked : false,
+                        value: input && !input.disabled ? input.value : ''
+                    };
+                });
+                const notes = panel.querySelector('.notes-area textarea');
+                state[day] = {
+                    entries,
+                    notes: notes ? notes.value : ''
+                };
+            });
+            state.activeDay = document.querySelector('.tab-btn.active')?.dataset.day || 'monday';
+            return state;
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(collectProgressState()));
+                const saveStatus = document.getElementById('saveStatus');
+                if (saveStatus) {
+                    saveStatus.textContent = '✔ Saved locally in this browser';
+                    saveStatus.style.color = '#2f6b45';
+                }
+                renderSummary();
+                renderSummaryPanel();
+            } catch (error) {
+                console.warn('Could not save progress:', error);
+            }
+        }
+
+        function restoreProgress() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return false;
+
+                const state = JSON.parse(saved);
+                if (!state) return false;
+
+                document.querySelectorAll('.day-panel').forEach(panel => {
+                    const day = panel.id.replace('panel-', '');
+                    const dayState = state[day];
+                    if (!dayState) return;
+
+                    const rows = panel.querySelectorAll('tbody tr');
+                    rows.forEach((row, index) => {
+                        const entry = dayState.entries?.[index];
+                        if (!entry) return;
+                        const checkbox = row.querySelector('input[type="checkbox"]');
+                        const input = row.querySelector('input[type="text"]');
+                        if (checkbox) checkbox.checked = Boolean(entry.checked);
+                        if (input && !input.disabled) input.value = entry.value || '';
+                    });
+
+                    const notes = panel.querySelector('.notes-area textarea');
+                    if (notes) notes.value = dayState.notes || '';
+                });
+
+                showDay(state.activeDay || 'monday');
+                renderSummary();
+                renderSummaryPanel();
+                return true;
+            } catch (error) {
+                console.warn('Could not restore progress:', error);
+                return false;
+            }
+        }
+
+        // ─── CLEAR ALL INPUTS & CHECKBOXES ───
+        function clearAllInputs() {
+            if (!confirm('Clear all typed inputs and uncheck all checkboxes?')) return;
+
+            document.querySelectorAll('.schedule-table input[type="text"]').forEach(inp => {
+                if (!inp.disabled) inp.value = '';
+            });
+            document.querySelectorAll('.notes-area textarea').forEach(ta => ta.value = '');
+            document.querySelectorAll('.schedule-table input[type="checkbox"]').forEach(cb => cb.checked = false);
+            saveProgress();
+        }
+
+        // ─── AUTO-RESIZE TEXTAREAS AND AUTO-SAVE ───
+        document.querySelectorAll('.notes-area textarea').forEach(ta => {
+            ta.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                saveProgress();
+            });
+        });
+
+        document.querySelectorAll('.schedule-table input[type="text"], .schedule-table input[type="checkbox"]').forEach(el => {
+            el.addEventListener('input', saveProgress);
+            el.addEventListener('change', saveProgress);
+        });
+
+        const restored = restoreProgress();
+        if (!restored) {
+            showDay('monday');
+        }
+        renderSummary();
+        renderSummaryPanel();
+    </script>
+
+</body>
+</html>
