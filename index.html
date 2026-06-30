@@ -840,7 +840,9 @@
                 const entries = Array.from(panel.querySelectorAll('tbody tr')).map(row => {
                     const checkbox = row.querySelector('input[type="checkbox"]');
                     const input = row.querySelector('input[type="text"]');
+                    const subjectCell = row.querySelector('.subject-cell');
                     return {
+                        subject: subjectCell ? subjectCell.textContent.replace(/\s+/g, ' ').trim() : '',
                         checked: checkbox ? checkbox.checked : false,
                         value: input && !input.disabled ? input.value : ''
                     };
@@ -889,6 +891,8 @@
                         if (!entry) return;
                         const checkbox = row.querySelector('input[type="checkbox"]');
                         const input = row.querySelector('input[type="text"]');
+                        const subjectCell = row.querySelector('.subject-cell');
+                        if (subjectCell && typeof entry.subject === 'string') subjectCell.textContent = entry.subject;
                         if (checkbox) checkbox.checked = Boolean(entry.checked);
                         if (input && !input.disabled) input.value = entry.value || '';
                     });
@@ -932,6 +936,35 @@
             el.addEventListener('input', saveProgress);
             el.addEventListener('change', saveProgress);
         });
+
+        // ─── SUBJECT EDITING (double-click to rename) ───
+        function enableSubjectEditing() {
+            document.querySelectorAll('.subject-cell').forEach(cell => {
+                cell.style.cursor = 'pointer';
+                cell.title = 'Double-click to rename subject';
+                cell.addEventListener('dblclick', function (e) {
+                    if (cell.classList.contains('break')) return;
+                    const oldName = cell.textContent.replace(/\s+/g, ' ').trim();
+                    const newName = prompt('Rename subject:', oldName);
+                    if (newName === null) return; // cancelled
+                    const nameTrim = newName.trim();
+                    if (!nameTrim) return;
+                    const applyAll = confirm('Apply this new name to all occurrences of "' + oldName + '"? Click OK to apply to all, Cancel to rename only this one.');
+                    if (applyAll) {
+                        document.querySelectorAll('.subject-cell').forEach(c => {
+                            if (c.textContent.replace(/\s+/g, ' ').trim() === oldName) {
+                                c.textContent = nameTrim;
+                            }
+                        });
+                    } else {
+                        cell.textContent = nameTrim;
+                    }
+                    saveProgress();
+                });
+            });
+        }
+
+        enableSubjectEditing();
 
         const restored = restoreProgress();
         if (!restored) {
